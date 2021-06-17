@@ -123,8 +123,8 @@
 
 
             socket.on('signal', data => {
-                console.log(data, "got signal webrtc successful");
-                $(".disconnected." + data.socket_id).text(data.socket_id + ": Attempting WebRtc Connection").removeClass("disconnected");
+                console.log(data, "got signal webrtc successful")
+                $(".disconnected." + data.socket_id).text(data.socket_id + ": WebRtc Success!").removeClass("disconnected").addClass("connected");
                 peers[data.socket_id].signal(data.signal)
             })
 
@@ -159,7 +159,6 @@
             $("#peers").append($("<a>", { text: socket_id + ": No Webrtc", class: socket_id + " peerLink disconnected", href: "#", "data-socket_Id": socket_id }));
             peers[socket_id].on('signal', data => {
                 console.log("Adding peers ========>", socket_id, " ===>", am_initiator)
-                $(".disconnected." + data.socket_id).text(data.socket_id + ": WebRtc Success!").removeClass("disconnected").addClass("connected");
                 socket.emit('signal', {
                     signal: data,
                     socket_id: socket_id
