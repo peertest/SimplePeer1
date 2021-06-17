@@ -97,7 +97,7 @@
          * initialize the socket connections
          */
         function init() {
-            socket = io("https://192.168.0.33:3012")
+            socket = io("/")
             socket.on("connect", () => {
                 console.log(socket.id, socket.io.engine.id, socket.json.id)
                 myId = socket.id;
