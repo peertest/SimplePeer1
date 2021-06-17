@@ -97,7 +97,7 @@
          * initialize the socket connections
          */
         function init() {
-            socket = io('/')
+            socket = io("https://192.168.0.33:3012")
             socket.on("connect", () => {
                 console.log(socket.id, socket.io.engine.id, socket.json.id)
                 myId = socket.id;
@@ -123,6 +123,7 @@
 
             socket.on('signal', data => {
                 console.log(data, "got signal");
+                $(".disconnected." + socket_id).text(socket_id + ": WebRtc Successful")
                 peers[data.socket_id].signal(data.signal)
             })
 
@@ -154,7 +155,7 @@
                 initiator: am_initiator,
                 config: configuration
             })
-            $("#peers").append($("<a>", { text: socket_id, class: socket_id + " peerLink", href: "#", "data-socket_Id": socket_id }));
+            $("#peers").append($("<a>", { text: socket_id + ": No Webrtc", class: socket_id + " peerLink disconnected", href: "#", "data-socket_Id": socket_id }));
             peers[socket_id].on('signal', data => {
                 console.log("Adding peers ========>", socket_id, " ===>", am_initiator)
                 socket.emit('signal', {
@@ -190,7 +191,8 @@
                 }
 
             })
-            $("body").on("click", ".peerLink", function () {
+            $("body").on("click", ".peerLink", function (ev) {
+                ev.preventDefault();
                 $("#sendTo").val($(this).attr("data-socket_Id"));
             })
         })
