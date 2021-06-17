@@ -123,7 +123,7 @@
 
             socket.on('signal', data => {
                 console.log(data, "got signal");
-                $(".disconnected." + socket_id).text(socket_id + ": WebRtc Successful")
+                $(".disconnected." + data.socket_id).text(data.socket_id + ": WebRtc Successful")
                 peers[data.socket_id].signal(data.signal)
             })
 
