@@ -48,7 +48,7 @@
     <script src="../webRTCStuff.js"></script>
     <script>
         $(function () {
-            init();
+            //init();
             $("#send").on("click", function (ev) {
                 ev.preventDefault();
                 const socket_id = $("#sendTo").val();
@@ -66,17 +66,36 @@
             })
         })
         
+        /*function connectToPeer(peer_Id){
+            /***This will try to connect to peer and if connection is successful peerConnected will be fired***/
+            /***If no reply or peerError is triggered then peer cannot connect for some reason***/
+        }*/
+        
         function peerConnected(peer_Id){
-        
-        }
-        
-        function peerData(peer_Id, data){
-        
+            /***Peer was connected with WebRtc Successfully***/
         }
         
         function peerError(peer_Id, data){
-        
+            /***Error connecting to peer use this to handle connection error**/
         }
+        
+        function peerData(peer_Id, data){
+            /***Connected Peer sent data use data as required***/
+            /***Peer Id is the sender***/
+        }
+        
+        function sendData(peer_Id, data){
+            /***Use this section to send data to connected peer***/
+            /***Peer Id is the reciever***/
+            if(peers[peer_Id].length){
+               /***Peer Exist Send Data***/
+              //peers[peer_Id].send(data)
+            }
+            else{
+                /***If this section then peer has disconnected or error***/
+            }
+        }
+        
     </script>
 </body>
 </html>
