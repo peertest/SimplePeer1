@@ -1,4 +1,4 @@
-<script>
+
         /**
 * Socket.io socket
 */
@@ -104,7 +104,6 @@
          *                  Set to false if the peer receives the connection.
          */
         function addPeer(socket_id, am_initiator) {
-            console.log("Adding peers ========>", socket_id, " ===>", am_initiator)
             $("#peers").append($("<a>", { text: socket_id, class: socket_id + " peerLink connected", href: "#", "data-socket_Id": socket_id }));
             $("#peers").append($("<br/>"))
             peers[socket_id] = new SimplePeer({
@@ -130,6 +129,3 @@
             });
 
         }
-
-
-    </script>
