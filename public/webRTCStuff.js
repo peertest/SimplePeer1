@@ -53,20 +53,19 @@
         function init() {
             socket = io("/")
             socket.on("connect", () => {
-                console.log(socket.id, socket.io.engine.id, socket.json.id)
                 myId = socket.id;
                 $("#myId").text(myId);
             });
 
             socket.on('initReceive', socket_id => {
                 console.log(socket_id, "init rcvd");
-                addPeer(socket_id, false);
+                //addPeer(socket_id, false);
                 socket.emit('initSend', socket_id)
             })
 
             socket.on('initSend', socket_id => {
                 console.log(socket_id, "init sent");
-                addPeer(socket_id, true)
+                //addPeer(socket_id, true)
             })
 
             socket.on('removePeer', socket_id => {
@@ -75,13 +74,10 @@
             })
 
 
-            socket.on('signal', data => {
+            /*socket.on('signal', data => {
                 console.log(data, "got signal webrtc successful")
-                //$(".disconnected." + data.socket_id).text(data.socket_id + ": WebRtc Success!").removeClass("disconnected").addClass("connected");
                 peers[data.socket_id].signal(data.signal)
-            })
-
-
+            })*/
         }
 
         /**
@@ -104,28 +100,25 @@
          *                  Set to false if the peer receives the connection.
          */
         function addPeer(socket_id, am_initiator) {
-            $("#peers").append($("<a>", { text: socket_id, class: socket_id + " peerLink connected", href: "#", "data-socket_Id": socket_id }));
-            $("#peers").append($("<br/>"))
             peers[socket_id] = new SimplePeer({
                 initiator: am_initiator,
                 config: configuration
             })
             
             peers[socket_id].on('signal', data => {
-                console.log("Adding peers ========>", socket_id, " ===>", am_initiator)
                 socket.emit('signal', {
                     signal: data,
                     socket_id: socket_id
                 })
+                peerConnected(socket_id)
             })
 
             peers[socket_id].on('error', err => {
-                console.log(err);
+                peerError(socket_id, err)
             })
+                
             peers[socket_id].on('data', function (chunk) {
                 var textChunk = chunk.toString('utf8');
-                $("#messages").prepend($("<p>", { text: socket_id + " says: " + textChunk }))
-                console.log(textChunk);
+                peerData(soket_id, textChunk)                  
             });
-
         }
