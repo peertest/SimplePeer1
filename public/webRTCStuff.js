@@ -54,7 +54,7 @@
             socket = io("/")
             socket.on("connect", () => {
                 myId = socket.id;
-                $("#myId").text(myId);
+                
             });
 
             socket.on('initReceive', socket_id => {
@@ -71,6 +71,12 @@
             socket.on('removePeer', socket_id => {
                 console.log(socket_id, "peer removed");
                 removePeer(socket_id)
+            })
+                
+           socket.on('yourAlias', alias => {
+                myAlias = alias;
+                console.log("yourAlias", alias)
+                $("#myId").text(myId);
             })
 
 
