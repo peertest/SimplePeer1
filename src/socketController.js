@@ -5,10 +5,11 @@ module.exports = (io) => {
     io.on('connect', (socket) => {
         console.log('a client is connected ', socket.id)
 
-
         // Initiate the connection process as soon as the client connects
+        socket.id = makeid(6);
+        console.log(socket.id);  
+        peers[socket.id] = socket;
 
-        peers[socket.id] = socket
 
         // Asking all other clients to setup the peer connection receiver
         for(let id in peers) {
@@ -47,4 +48,17 @@ module.exports = (io) => {
             peers[init_socket_id].emit('initSend', socket.id)
         })
     })
+}
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() *  charactersLength));
+   }
+   if(peers[result].length){
+       result = makeid(6);
+   }
+   return result;
 }
