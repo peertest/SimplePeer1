@@ -9,7 +9,7 @@ module.exports = (io) => {
         //console.log(socket.id);  
         peers[socket.id] = socket;
         peers[socket.id].alias = makeid[6];
-        socket.alias = peers[socket.id].alias;
+        //socket.alias = peers[socket.id].alias;
 
         // Asking all other clients to setup the peer connection receiver
         for(let id in peers) {
