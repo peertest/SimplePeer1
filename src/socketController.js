@@ -1,64 +1,61 @@
 peers = {}
+aliasmap = {}
 
 
 module.exports = (io) => {
     io.on('connect', (socket) => {
         console.log('a client is connected ', socket.id)
 
-        // Initiate the connection process as soon as the client connects
-        //socket.id = makeid(6);
-        //console.log(socket.id);  
-        peers[socket.id] = socket;
-        peers[socket.id].alias = makeid[6];
-        socket.alias = peers[socket.id].alias;
-        socket.emit("yourAlias", socket.id);
-
-
-        // Asking all other clients to setup the peer connection receiver
-        for(let id in peers) {
-            if(id === socket.id) continue
-            console.log('sending init receive to ' + socket.id)
-            peers[id].emit('initReceive', socket.id)
-        }
-
+        let alias = makeid(6);
+        peers[alias] = socket;
+        socket.emit("yourAlias", alias);
+        aliasmap[socket.id] =  alias;
         /**
          * relay a peerconnection signal to a specific socket
          */
-        socket.on('signal', data => {
-            //console.log('sending signal from ' + socket.id + ' to ', data)
-            if(!peers[data.socket_id])return
-            peers[data.socket_id].emit('signal', {
-                socket_id: socket.id,
-                signal: data.signal
-            })
+         socket.on('signal', data => {
+            console.log('sending signal from ' + socket.id)
+            let myAlias = aliasmap[socket.id]
+            if(!peers[data.alias])return
+            signal = {
+                signal: data.signal,
+                alias: myAlias
+            }
+            peers[data.alias].emit('signal', signal)
+        })
+
+        socket.on('connectRtc', data => {
+            console.log(data.connectTo, data.myAlias);
+            peers[data.connectTo].emit("connectRtc", data.myAlias);
         })
 
         /**
          * remove the disconnected peer connection from all other connected clients
          */
-        socket.on('disconnect', () => {
-            console.log('socket disconnected ' + socket.id)
-            socket.broadcast.emit('removePeer', socket.id)
-            delete peers[socket.id]
+         socket.on('disconnect', () => {
+            let _alias = aliasmap[socket.id];
+            console.log('socket disconnected ' + socket.id + " alias: " + _alias)
+            socket.broadcast.emit('removePeer', _alias)
+            delete peers[_alias];
+            delete aliasmap[socket.id];
         })
 
-        /**
-         * Send message to client to initiate a connection
-         * The sender has already setup a peer connection receiver
-         */
-        socket.on('initSend', init_socket_id => {
-            console.log('INIT SEND by ' + socket.id + ' for ' + init_socket_id)
-            peers[init_socket_id].emit('initSend', socket.id)
-        })       
+        socket.on('removePeer', () =>{
+            let _alias = aliasmap[socket.id];
+            socket.broadcast.emit('removePeer', _alias)
+        })
     })
 }
 
 function makeid(length) {
     var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     var charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
       result += characters.charAt(Math.floor(Math.random() *  charactersLength));
     }
-   return result;
+    if(peers[result]){
+        result = makeid(6);
+    }
+    return result;
 }
