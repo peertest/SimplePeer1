@@ -152,13 +152,14 @@
          */
         function addPeer(socket_id, am_initiator) {
             console.log("Adding peers ========>", socket_id, " ===>", am_initiator)
+            $("#peers").append($("<a>", { text: socket_id, class: socket_id + " peerLink connected", href: "#", "data-socket_Id": socket_id }));
+            $("#peers").append($("<br/>"))
             peers[socket_id] = new SimplePeer({
                 initiator: am_initiator,
                 config: configuration
             })
+            
             peers[socket_id].on('signal', data => {
-                $("#peers").append($("<a>", { text: socket_id + ": No Webrtc", class: socket_id + " peerLink connected", href: "#", "data-socket_Id": socket_id }));
-                $("#peers").append($("<br/>"))
                 console.log("Adding peers ========>", socket_id, " ===>", am_initiator)
                 socket.emit('signal', {
                     signal: data,
