@@ -15,6 +15,8 @@
 
         let myId;
 
+        let myAlias;
+
         // redirect if not https
         if (location.href.substr(0, 5) !== 'https')
             location.href = 'https' + location.href.substr(4, location.href.length - 4)
