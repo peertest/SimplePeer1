@@ -1,5 +1,6 @@
 peers = {}
 
+
 module.exports = (io) => {
     io.on('connect', (socket) => {
         console.log('a client is connected ', socket.id)
@@ -9,7 +10,9 @@ module.exports = (io) => {
         //console.log(socket.id);  
         peers[socket.id] = socket;
         peers[socket.id].alias = makeid[6];
-        //socket.alias = peers[socket.id].alias;
+        socket.alias = peers[socket.id].alias;
+        socket.emit("yourAlias", socket.id);
+
 
         // Asking all other clients to setup the peer connection receiver
         for(let id in peers) {
@@ -46,7 +49,7 @@ module.exports = (io) => {
         socket.on('initSend', init_socket_id => {
             console.log('INIT SEND by ' + socket.id + ' for ' + init_socket_id)
             peers[init_socket_id].emit('initSend', socket.id)
-        })
+        })       
     })
 }
 
