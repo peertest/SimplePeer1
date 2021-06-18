@@ -7,20 +7,40 @@
     <script src="/simple-peer/simplepeer.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    
+    <div class="container" >
         <h2>
             <small>Your peer id is: </small> <span id="myId"></span>
         </h2>
-        <div class="row">
-            <div class="col-4" id="peers">
-                <h4>Peers Available</h4>
+        <div class="row d-none" id='connection'>
+            <div class="col-12">
+                <hr/>
+                <form>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Partner Id: </label>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="partnerId" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary" type="button" id="initiateConnection">
+                                Connect
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="col-8">
-                <h4>Send Message</h4>
-                <form id="connect">
+        </div>
+        <hr/>
+        <div class="row d-none" id='onConnect'>
+            <div class="col-12">
+                <form>
                     <div class="form-group">
                         <label>Send to: </label>
-                        <input type="text" class="form-control" id="sendTo" />
+                        <input type="text" class="form-control " id="sendTo" disabled/>
                     </div>
                     <div class="form-group">
                         <label>Message: </label>
@@ -32,38 +52,158 @@
                     </button>
                 </form>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <h4>Messages</h4>
+            <div class="col-12 pt-5">
+                <h2>Messages</h2>
                 <div id="messages">
 
                 </div>
             </div>
         </div>
-
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="../webRTCStuff.js"></script>
+    <script>
+        /**
+ * Socket.io socket
+ */
+let socket;
+/**
+ * All peer connections
+ */
+let peers = {}
+let aliasMap ={}
+
+let myAlias;
+
+// redirect if not https
+if (location.href.substr(0, 5) !== 'https')
+    location.href = 'https' + location.href.substr(4, location.href.length - 4)
+
+
+//////////// CONFIGURATION //////////////////
+/**
+ * RTCPeerConnection configuration 
+ */
+const configuration = {
+"iceServers": [   {
+            "urls": "stun:stun.l.google.com:19302"
+        }]    
+}
+/**
+ * initialize the socket connections
+ */
+function init() {
+    socket = io("/")
+    console.log("socket initialized");
+    socket.on('yourAlias', alias => {
+        console.log(alias)
+        $("#myId").text(alias);
+        myAlias = alias;
+        $("#connection").removeClass("d-none");
+    })
+
+    socket.on("connectRtc", peerAlias => {
+        console.log(peers.length);
+        addPeer(peerAlias, true)
+    })
+
+    socket.on('removePeer', alias => {
+        removePeer(alias)
+        console.log("removePeer", peers.length, alias);
+        if(!peers.length){
+            $("#connection").removeClass("d-none");
+            $("#onConnect").addClass("d-none");
+        }
+    })
+
+    socket.on('disconnect', () => {
+        for (let alias in peers) {
+            removePeer(alias)
+        }
+        console.log("disconnect", peers.length);
+        if(!peers.length){
+            $("#connection").removeClass("d-none");
+            $("#onConnect").addClass("d-none");
+        }
+    })
+    socket.on('signal', data => {
+        console.log("signal rcvd", data.alias);
+        peers[data.alias].signal(data.signal)
+    })
+}
+
+/**
+ * Remove a peer with given socket_id. 
+ * Removes the video element and deletes the connection
+ * @param {String} socket_id 
+ */
+function removePeer(alias) {
+    if (peers[alias]) peers[alias].destroy()
+    delete peers[alias]
+    socket.emit("removePeer", alias)
+}
+
+/**
+ * Creates a new peer connection and sets the event listeners
+ * @param {String} socket_id 
+ *                 ID of the peer
+ * @param {Boolean} am_initiator 
+ *                  Set to true if the peer initiates the connection process.
+ *                  Set to false if the peer receives the connection. 
+ */
+function addPeer(alias, am_initiator) {
+    console.log("Adding peers ========>", alias, " ===>", am_initiator)
+    peers[alias] = new SimplePeer({
+        initiator: am_initiator,
+        config: configuration
+    })
+
+    peers[alias].on('signal', data => {
+        socket.emit('signal', {
+            signal: data,
+            alias: alias,
+            myAlias: myAlias
+        })
+    })
+
+    peers[alias].on('connect', data => {
+        peerConnected(alias);
+    })
+
+   peers[alias].on('error', err => {
+     console.log("peer: " + alias, err);    
+   })
+
+   peers[alias].on('data', function (chunk) {
+        var textChunk = chunk.toString('utf8');
+        peerData(alias, textChunk);
+   });
+
+}
+    </script>
     <script>
         $(function () {
-            init();
+           
+            $("#initiateConnection").on("click", function(ev){
+                partnerId = $("#partnerId").val();
+                if(partnerId.length && partnerId != myAlias){
+                    addPeer(partnerId);
+                    data = {
+                        connectTo: partnerId,
+                        myAlias: myAlias
+                    }
+                    socket.emit("connectRtc", data)
+                }
+            })
+
             $("#send").on("click", function (ev) {
                 ev.preventDefault();
-                const socket_id = $("#sendTo").val();
+                const alias = $("#sendTo").val();
                 const message = $("#message").val();
-                if (peers[socket_id] && message.length) {
-                    peers[socket_id].send(message)
-                    $("#message").val("");
-                    $("#messages").prepend($("<p>", { text: "you said: " + message + " to " + socket_id }))
-                }
-
+                sendData(alias, message)
             })
-            $("body").on("click", ".peerLink.connected", function (ev) {
-                ev.preventDefault();
-                $("#sendTo").val($(this).attr("data-socket_Id"));
-            })
+            
+            init();
         })
         
         //function connectToPeer(peer_Id){
@@ -71,31 +211,38 @@
             /***If no reply or peerError is triggered then peer cannot connect for some reason***/
         //}
         
-        function peerConnected(peer_Id){
+        function peerConnected(alias){
             /***Peer was connected with WebRtc Successfully***/
+            $("#connection").addClass("d-none");
+            $("#onConnect").removeClass("d-none");
+            $("#sendTo").val(alias);
         }
         
-        function peerError(peer_Id, data){
+        function peerError(alias, data){
             /***Error connecting to peer use this to handle connection error**/
         }
         
-        function peerData(peer_Id, data){
+        function peerData(alias, data){
             /***Connected Peer sent data use data as required***/
             /***Peer Id is the sender***/
+            $("#messages").prepend($("<p>", { text: alias + " says: " + data }))
         }
         
-        function sendData(peer_Id, data){
+        function sendData(alias, data){
             /***Use this section to send data to connected peer***/
             /***Peer Id is the reciever***/
-            if(peers[peer_Id].length){
+            console.log("sending", alias, data)
+            if(peers[alias] && data.length){
                /***Peer Exist Send Data***/
               //peers[peer_Id].send(data)
+              peers[alias].send(data)
+              $("#message").val("");
+              $("#messages").prepend($("<p>", { text: "you said: " + data + " to " + alias }))
             }
             else{
                 /***If this section then peer has disconnected or error***/
             }
         }
-        
     </script>
 </body>
 </html>
