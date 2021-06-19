@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/game.css" />
 </head>
 <body>
-    <div id="status"class="container">
+    <div id="status" class="container">
         <div class="row d-none" id='connection'>
             <div class="col-12">
                 <form>
@@ -40,7 +40,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/main.js"></script>
-    <script src="client.js"><</script>
+    <script>
+        const playerIndex = 1;
+    </script>
+    <script src="shared.js"><</script>
     <script>
         $(function () {
 
@@ -77,46 +80,6 @@
             $('#gameWindow').removeAttr('style');
 
             connected()
-        }
-
-        function peerError(alias, data) {
-            /***Error connecting to peer use this to handle connection error**/
-            /***If connection was successful before then connection has dropped***/
-            /***alias is the peer and data is the error details***/
-        }
-
-        function peerData(alias, data) {
-            /***Connected Peer sent data use data as required***/
-            /***alias is the sender***/
-            console.log('Received', data);
-            var obj;
-            if (obj = JSON.parse(data)) if (obj.move) {
-                //Hardcoded opponent ID...
-                move(1, obj.move.from, obj.move.to.x, obj.move.to.y);
-            }
-
-        }
-
-        function sendData(data) {
-            console.log('sending: ', data)
-            /***Use this section to send data to connected peer***/
-            /***alias is the reciever***/
-            if (myPartnerAlias && peers[myPartnerAlias] && data.length) {
-                peers[myPartnerAlias].send(data)
-            }
-            else {
-                /****No webrtc***/
-            }
-            /*console.log("sending", alias, data)
-            if(peers[alias] && data.length){
-
-              peers[alias].send(data)
-              $("#message").val("");
-              $("#messages").prepend($("<p>", { text: "you said: " + data + " to " + alias }))
-            }
-            else{
-
-            }*/
         }
     </script>
 </body>
