@@ -31,8 +31,6 @@ class GameProcessor {
             };
             this.#runners[S.x][S.y] = false;
         }
-        console.log("from", this.#runners[S.x][S.y]);
-        console.log("to", this.#runners[x2][y2]);
         this.checkForCaptures();
         if (playerIndex == 1) this.turn = 2;
         if (playerIndex == 2) this.turn = 1;
