@@ -79,9 +79,8 @@
 
             $("#send").on("click", function (ev) {
                 ev.preventDefault();
-                const alias = $("#sendTo").val();
                 const message = $("#message").val();
-                sendData(alias, message)
+                sendData(message)
             })
             /***Initialize Connections***/
             init();
@@ -107,20 +106,25 @@
             $("#messages").prepend($("<p>", { text: alias + " says: " + data }))
         }
         
-        function sendData(alias, data){
+        function sendData(data){
             /***Use this section to send data to connected peer***/
             /***alias is the reciever***/
-            console.log("sending", alias, data)
+            if(myPartnerAlias && peers[myPartnerAlias] && data.length){
+                 peers[myPartnerAlias].send(data)
+            }
+            else{
+                /****No webrtc***/
+            }
+            /*console.log("sending", alias, data)
             if(peers[alias] && data.length){
-               /***Peer Exist Send Data***/
-              //peers[peer_Id].send(data)
+               
               peers[alias].send(data)
               $("#message").val("");
               $("#messages").prepend($("<p>", { text: "you said: " + data + " to " + alias }))
             }
             else{
-                /***If this section then peer has disconnected or error***/
-            }
+                
+            }*/
         }
     </script>
 </body>
