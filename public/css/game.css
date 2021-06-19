@@ -1,0 +1,10 @@
+#gameWindow > canvas {
+    position: absolute;
+}
+
+.gameBoard {
+    background-color: transparent;
+}
+
+.gamePieces {
+}
