@@ -24,7 +24,11 @@ function sendData(rawData) {
     /***Use this section to send data to connected peer***/
     /***alias is the reciever***/
     var data;
-    if (typeof data == "object") data = JSON.stringify(rawData)
+    if (typeof data == "object") {
+        data = JSON.stringify(rawData)
+    } else {
+        data = rawData
+	}
     if (myPartnerAlias && peers[myPartnerAlias] && data.length) {
         peers[myPartnerAlias].send(data)
     }
