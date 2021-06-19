@@ -211,7 +211,7 @@ function addPeer(alias, am_initiator) {
         //}
         
         function peerConnected(alias){
-            /***Peer was connected with WebRtc Successfully***/
+            /***Peer alias was connected with WebRtc Successfully***/
             $("#connection").addClass("d-none");
             $("#onConnect").removeClass("d-none");
             $("#sendTo").val(alias);
@@ -219,17 +219,19 @@ function addPeer(alias, am_initiator) {
         
         function peerError(alias, data){
             /***Error connecting to peer use this to handle connection error**/
+            /***If connection was successful before then connection has dropped***/
+            /***alias is the peer and data is the error details***/
         }
         
         function peerData(alias, data){
             /***Connected Peer sent data use data as required***/
-            /***Peer Id is the sender***/
+            /***alias is the sender***/
             $("#messages").prepend($("<p>", { text: alias + " says: " + data }))
         }
         
         function sendData(alias, data){
             /***Use this section to send data to connected peer***/
-            /***Peer Id is the reciever***/
+            /***alias is the reciever***/
             console.log("sending", alias, data)
             if(peers[alias] && data.length){
                /***Peer Exist Send Data***/
