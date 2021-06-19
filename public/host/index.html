@@ -69,10 +69,12 @@
         function peerData(alias, data) {
             /***Connected Peer sent data use data as required***/
             /***alias is the sender***/
-            if (data.move) {
-                console.log('Received', data);
-                move(2, data.move.from, data.move.to.x, data.move.to.y);
+            var obj;
+            if (obj = JSON.parse(data)) if (obj.move) {
+                //Hardcoded opponent ID...
+                move(1, obj.move.from, obj.move.to.x, obj.move.to.y);
             }
+
         }
 
         function sendData(data) {

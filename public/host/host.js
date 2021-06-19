@@ -16,7 +16,7 @@ function connected() {
             drawSelection(S);
             Client.selected = S;
         } else if (Client.selected && Game.isMoveLegal(Client.selected, S.x, S.y)) {
-            sendData({
+            sendData(JSON.stringify({
                 move: {
                     from: Client.selected,
                     to: {
@@ -24,7 +24,7 @@ function connected() {
                         y: S.y
                     }
                 }
-            });
+            }));
             move(playerIndex, Client.selected, S.x, S.y);
         } else {
             Client.selected = false;
