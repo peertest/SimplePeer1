@@ -57,9 +57,8 @@
 
             $("#send").on("click", function (ev) {
                 ev.preventDefault();
-                const alias = $("#sendTo").val();
                 const message = $("#message").val();
-                sendData(alias, message)
+                sendData(message)
             })
             /***Initialize Connections***/
             init();
@@ -88,7 +87,7 @@
         function sendData(data){
             /***Use this section to send data to connected peer***/
             /***alias is the reciever***/
-            if(myPartnerAlias && peers[alias] && data.length){
+            if(myPartnerAlias && peers[myPartnerAlias] && data.length){
                  peers[myPartnerAlias].send(data)
             }
             else{
