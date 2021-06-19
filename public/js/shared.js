@@ -1,3 +1,17 @@
+//Configuration
+const gameConfig = {
+    starting_player: 1,
+    player_colors: [
+        '#FF6542',
+        '#392788'
+    ]
+}
+const boardColors = {
+    black_highligth: "rgba(41, 204, 174, 0.25)",
+    black_square: ["#212518", "#6F7B51"],
+    white_highlight: "rgba(41, 204, 174, 0.45)",
+    white_square: "#E2E0CB"
+}
 function peerError(alias, data) {
     /***Error connecting to peer use this to handle connection error**/
     /***If connection was successful before then connection has dropped***/
@@ -50,6 +64,8 @@ function connected() {
 
     Client = new GameClient(playerIndex, 'gameWindow');
     Game = new GameProcessor('Player 1', 'Player 2');
+    Game.config = gameConfig;
+    Client.GW.B.colors = boardColors;
     Game.startGame();
     Client.GW.B.drawBoard();
     refreshPieces();
