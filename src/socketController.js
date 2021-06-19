@@ -40,10 +40,10 @@ module.exports = (io) => {
             delete aliasmap[socket.id];
         })
 
-        socket.on('removePeer', () =>{
+        /*socket.on('removePeer', () =>{
             let _alias = aliasmap[socket.id];
             socket.broadcast.emit('removePeer', _alias)
-        })
+        })*/
     })
 }
 
