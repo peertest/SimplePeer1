@@ -14,13 +14,15 @@ function connected() {
             drawSelection(S);
             Client.selected = S;
         } else if (Client.selected && Game.isMoveLegal(Client.selected, S.x, S.y)) {
-             sendData({
-                from: Client.selected,
-                to: {
-                    x: S.x,
-                    y: S.y
+            sendData({
+                move: {
+                    from: Client.selected,
+                    to: {
+                        x: S.x,
+                        y: S.y
+                    }
                 }
-            });
+             });
             move(playerIndex, Client.selected, S.x, S.y);
         } else {
             Client.selected = false;
