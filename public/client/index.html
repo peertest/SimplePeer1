@@ -4,9 +4,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script lang="text/javascript" src="/socket.io/socket.io.js"></script>
     <script src="/simple-peer/simplepeer.min.js"></script>
+    <script src="/js/game.js"></script>
 </head>
 <body>
-    <div class="container" >
+    <div id="status"class="container">
         <div class="row d-none" id='connection'>
             <div class="col-12">
                 <form>
@@ -28,17 +29,23 @@
                 </form>
             </div>
         </div>
-        <hr/>
+        <hr />
     </div>
+    <div id="gameWindow" style="display:none;">
+        <canvas class="gameBoard" width="500" height="500"></canvas>
+        <canvas class="gamePieces" width="500" height="500"></canvas>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/main.js"></script>
+    <script src="client.js"><</script>
     <script>
         $(function () {
-           
-            $("#initiateConnection").on("click", function(ev){
+
+            $("#initiateConnection").on("click", function (ev) {
                 partnerId = $("#partnerId").val();
-                if(partnerId.length && partnerId != myAlias){
+                if (partnerId.length && partnerId != myAlias) {
                     /***Adding a peer script***/
                     addPeer(partnerId);
                     data = {
@@ -59,44 +66,52 @@
             init();
             /***Initialize Connections***/
         })
-        
-        function peerConnected(alias){
+
+        function peerConnected(alias) {
             /***Peer alias was connected with WebRtc Successfully***/
             $("#connection").addClass("d-none");
             $("#onConnect").removeClass("d-none");
-            $("#sendTo").val(alias);
+
+            $('#status').css('display', 'none');
+            $('#gameWindow').removeAttr('style');
+
+            connected()
         }
-        
-        function peerError(alias, data){
+
+        function peerError(alias, data) {
             /***Error connecting to peer use this to handle connection error**/
             /***If connection was successful before then connection has dropped***/
             /***alias is the peer and data is the error details***/
         }
-        
-        function peerData(alias, data){
+
+        function peerData(alias, data) {
             /***Connected Peer sent data use data as required***/
             /***alias is the sender***/
             console.log('Received', data);
+            if (data.move) {
+                //Hardcoded opponent ID...
+                move(1, data.move.from, data.move.to.x, data.move.to.y);
+            }
         }
-        
-        function sendData(data){
+
+        function sendData(data) {
             /***Use this section to send data to connected peer***/
             /***alias is the reciever***/
-            if(myPartnerAlias && peers[myPartnerAlias] && data.length){
-                 peers[myPartnerAlias].send(data)
+            if (myPartnerAlias && peers[myPartnerAlias] && data.length) {
+                peers[myPartnerAlias].send(data)
             }
-            else{
+            else {
                 /****No webrtc***/
             }
             /*console.log("sending", alias, data)
             if(peers[alias] && data.length){
-               
+
               peers[alias].send(data)
               $("#message").val("");
               $("#messages").prepend($("<p>", { text: "you said: " + data + " to " + alias }))
             }
             else{
-                
+
             }*/
         }
     </script>
