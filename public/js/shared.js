@@ -20,7 +20,7 @@ function peerData(alias, rawData) {
 }
 
 function sendData(rawData) {
-    console.log('Sending: ', data)
+    console.log('Sending: ', rawData)
     /***Use this section to send data to connected peer***/
     /***alias is the reciever***/
     var data;
