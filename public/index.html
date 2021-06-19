@@ -9,7 +9,7 @@
 <body>
     
     <div class="container" >
-        <h2>
+        <h4>
             <small>Your peer id is: </small> <span id="myId"></span>
         </h2>
         <div class="row d-none" id='connection'>
@@ -186,12 +186,14 @@ function addPeer(alias, am_initiator) {
             $("#initiateConnection").on("click", function(ev){
                 partnerId = $("#partnerId").val();
                 if(partnerId.length && partnerId != myAlias){
+                    /***Adding a peer script***/
                     addPeer(partnerId);
                     data = {
                         connectTo: partnerId,
                         myAlias: myAlias
                     }
                     socket.emit("connectRtc", data)
+                    /***end of adding peer***/
                 }
             })
 
@@ -201,8 +203,9 @@ function addPeer(alias, am_initiator) {
                 const message = $("#message").val();
                 sendData(alias, message)
             })
-            
+            /***Initialize Connections***/
             init();
+            /***Initialize Connections***/
         })
         
         //function connectToPeer(peer_Id){
