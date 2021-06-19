@@ -11,7 +11,7 @@ function peerData(alias, rawData) {
     try {
         data = JSON.parse(rawData)
         var opponentPlayerIndex = playerIndex == 1 ? 2 : 1;
-        if (data.move) move(1, data.move.from, data.move.to.x, data.move.to.y);
+        if (data.move) move(opponentPlayerIndex, data.move.from, data.move.to.x, data.move.to.y);
 
     } catch (e) {
         data = rawData
