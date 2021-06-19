@@ -3,13 +3,12 @@
  */
 let socket;
 /**
- * The stream object used to send media
- */
-let localStream = null;
-/**
  * All peer connections
  */
 let peers = {}
+let aliasMap ={}
+
+let myAlias;
 
 // redirect if not https
 if (location.href.substr(0, 5) !== 'https')
@@ -17,63 +16,54 @@ if (location.href.substr(0, 5) !== 'https')
 
 
 //////////// CONFIGURATION //////////////////
-
 /**
  * RTCPeerConnection configuration 
  */
 const configuration = {
 "iceServers": [   {
             "urls": "stun:stun.l.google.com:19302"
-        }         
-         /*
-         // set your own servers here if needed
-         Custom turn/stun servere
-         ,{
-                    "urls": ["stun:myturnserver.com"],
-                    credential: '12345',
-                    username: 'abcd'                },
-                
-                {
-                    "urls": ['turn:myturnserver.com'],
-                    credential: '12345',
-                    username: 'abcd'
-                }*/
-            ]    
+        }]    
 }
-
-init();
-
 /**
  * initialize the socket connections
  */
 function init() {
-    socket = io("80.7.136.70:3012")
+    socket = io("/")
     console.log("socket initialized");
-    socket.on('initReceive', socket_id => {
-        clog('INIT RECEIVE ' + socket_id)
-        addPeer(socket_id, false)
-        socket.emit('initSend', socket_id)
+    socket.on('yourAlias', alias => {
+        console.log(alias)
+        $("#myId").text(alias);
+        myAlias = alias;
+        $("#connection").removeClass("d-none");
     })
 
-    socket.on('initSend', socket_id => {
-        clog('INIT SEND ' + socket_id)
-        addPeer(socket_id, true)
+    socket.on("connectRtc", peerAlias => {
+        console.log(peers.length);
+        addPeer(peerAlias, true)
     })
 
-    socket.on('removePeer', socket_id => {
-        clog('removing peer ' + socket_id)
-        removePeer(socket_id)
-    })
-
-    socket.on('disconnect', () => {
-        clog('GOT DISCONNECTED')
-        for (let socket_id in peers) {
-            removePeer(socket_id)
+    socket.on('removePeer', alias => {
+        removePeer(alias)
+        console.log("removePeer", peers.length, alias);
+        if(!peers.length){
+            $("#connection").removeClass("d-none");
+            $("#onConnect").addClass("d-none");
         }
     })
 
+    socket.on('disconnect', () => {
+        for (let alias in peers) {
+            removePeer(alias)
+        }
+        console.log("disconnect", peers.length);
+        if(!peers.length){
+            $("#connection").removeClass("d-none");
+            $("#onConnect").addClass("d-none");
+        }
+    })
     socket.on('signal', data => {
-        peers[data.socket_id].signal(data.signal)
+        console.log("signal rcvd", data.alias);
+        peers[data.alias].signal(data.signal)
     })
 }
 
@@ -82,9 +72,10 @@ function init() {
  * Removes the video element and deletes the connection
  * @param {String} socket_id 
  */
-function removePeer(socket_id) {
-    if (peers[socket_id]) peers[socket_id].destroy()
-    delete peers[socket_id]
+function removePeer(alias) {
+    if (peers[alias]) peers[alias].destroy()
+    delete peers[alias]
+    socket.emit("removePeer", alias)
 }
 
 /**
@@ -95,29 +86,32 @@ function removePeer(socket_id) {
  *                  Set to true if the peer initiates the connection process.
  *                  Set to false if the peer receives the connection. 
  */
-function addPeer(socket_id, am_initiator) {
-    clog("Adding peers ========>", socket_id, " ===>", am_initiator)
-    peers[socket_id] = new SimplePeer({
+function addPeer(alias, am_initiator) {
+    console.log("Adding peers ========>", alias, " ===>", am_initiator)
+    peers[alias] = new SimplePeer({
         initiator: am_initiator,
-        stream: localStream,
         config: configuration
     })
 
-    peers[socket_id].on('signal', data => {
+    peers[alias].on('signal', data => {
         socket.emit('signal', {
             signal: data,
-            socket_id: socket_id
+            alias: alias,
+            myAlias: myAlias
         })
     })
 
-    peers[socket_id].on('stream', stream => {
-	console.log("stream");
+    peers[alias].on('connect', data => {
+        peerConnected(alias);
     })
 
-   peers[socket_id].on('error', stream => {
-     console.log(stream);    
+   peers[alias].on('error', err => {
+     console.log("peer: " + alias, err);    
    })
 
+   peers[alias].on('data', function (chunk) {
+        var textChunk = chunk.toString('utf8');
+        peerData(alias, textChunk);
+   });
+
 }
-
-
