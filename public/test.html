@@ -120,8 +120,6 @@
                 console.log(socket_id, "peer removed");
                 removePeer(socket_id)
             })
-
-
             socket.on('signal', data => {
                 console.log(data, "got signal webrtc successful")
                 $(".disconnected." + data.socket_id).text(data.socket_id + ": WebRtc Success!").removeClass("disconnected").addClass("connected");
@@ -152,7 +150,7 @@
          */
         function addPeer(socket_id, am_initiator) {
             console.log("Adding peers ========>", socket_id, " ===>", am_initiator)
-            peers[socket_id] = new SimplePeer({
+            peers[socket_id] = new SimplePeer({am_
                 initiator: am_initiator,
                 config: configuration
             })
