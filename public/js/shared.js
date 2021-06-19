@@ -16,7 +16,7 @@ function peerData(alias, rawData) {
     } catch (e) {
         data = rawData
     }
-
+    console.log(data)
 }
 
 function sendData(rawData) {
