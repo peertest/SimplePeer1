@@ -7,7 +7,7 @@ let socket;
  */
 let peers = {}
 let aliasMap ={}
-
+let myPartnerAlias;
 let myAlias;
 
 // redirect if not https
@@ -103,10 +103,12 @@ function addPeer(alias, am_initiator) {
 
     peers[alias].on('connect', data => {
         peerConnected(alias);
+        myPartnerAlias = alias;
     })
 
    peers[alias].on('error', err => {
-     console.log("peer: " + alias, err);    
+     console.log("peer: " + alias, err);
+     myPartnerAlias = "";
    })
 
    peers[alias].on('data', function (chunk) {
