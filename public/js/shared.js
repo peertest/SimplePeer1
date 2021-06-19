@@ -42,9 +42,6 @@ function sendData(rawData) {
 
     }*/
 }
-var Client;
-var Game;
-
 function connected() {
 
     Client = new GameClient(playerIndex, 'gameWindow');
