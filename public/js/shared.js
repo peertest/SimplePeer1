@@ -145,7 +145,7 @@ function winPrompt(i) {
     if (playerIndex == i) {
         alert('You won the game!')
     } else {
-        aler('you lost :((')
+        alert('you lost :((')
     }
 }
 //Display version on bottom left corner
