@@ -1,5 +1,5 @@
 //Configuration
-const version = "0.1.0";
+const version = "0.1.1";
 const gameConfig = {
     starting_player: 1,
     player_colors: [
@@ -150,5 +150,5 @@ function winPrompt(i) {
 }
 //Display version on bottom left corner
 $(function () {
-    $('body').append('<footer id="version" style="position: absolute;bottom: 0;color: rgb(27 27 27 / 34%);">' + version + '</footer>')
+    $('body').append('<footer id="version" style="position: absolute;bottom: 0;color: rgb(27 27 27 / 34%);user-select:none;">' + version + '</footer>')
 })
