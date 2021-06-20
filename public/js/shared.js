@@ -1,5 +1,5 @@
 //Configuration
-const version = "0.1.3";
+const version = "0.1.4";
 const gameConfig = {
     starting_player: 1,
     player_colors: [
@@ -90,9 +90,6 @@ function connected() {
             Client.selected = false;
             Client.GW.B.drawBoard();
         }
-        //Check for winner
-        var winner = Game.checkWinner();
-        if (winner) winPrompt(winner);
     })
 }
 
@@ -133,6 +130,9 @@ let move = (p, S, x2, y2) => {
         Client.selected = false;
         Client.GW.B.drawBoard();
     }
+    //Check for winner
+    var winner = Game.checkWinner();
+    if (winner) winPrompt(winner);
 }
 let drawSelection = (S) => {
     Client.GW.B.drawBoard();
