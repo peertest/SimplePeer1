@@ -461,7 +461,7 @@ function possibleRunnerMoves(runners, x, y) {
             y: y
         });
     }
-    if (x < 7 && !runners[x + 1][y]) {
+    if (x < 6 && !runners[x + 1][y]) {
         moves.push({
             x: x + 1,
             y: y
