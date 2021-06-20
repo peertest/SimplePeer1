@@ -455,7 +455,7 @@ function possibleRunnerMoves(runners, x, y) {
         return false;
     }
     var moves = [];
-    if (x > 0 && !runners[x - 1][y]) {
+    if (x >= 0 && !runners[x - 1][y]) {
         moves.push({
             x: x - 1,
             y: y
@@ -469,7 +469,7 @@ function possibleRunnerMoves(runners, x, y) {
     }
 
     var dy = runner.player == 1 ? -1 : 1; //calculate player relative delta y
-    if (y + dy < 7 && y + dy > 0 && !runners[x][y + dy]) {
+    if (y + dy < 7 && y + dy >= 0 && !runners[x][y + dy]) {
         moves.push({
             x: x,
             y: y + dy
