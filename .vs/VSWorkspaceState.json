@@ -1,8 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\public"
+    "\\public",
+    "\\public\\client",
+    "\\public\\css",
+    "\\public\\host",
+    "\\public\\js"
   ],
-  "SelectedNode": "\\public\\index.html",
+  "SelectedNode": "\\public\\css\\game.css",
   "PreviewInSolutionExplorer": false
 }

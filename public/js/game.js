@@ -55,7 +55,6 @@ class GameProcessor {
         return false;
     }
     checkForCaptures() {
-        return true;
         this.#runners.map((column, x) => column.map((item, y) => {
 
             var surrounding_guards = 0;
