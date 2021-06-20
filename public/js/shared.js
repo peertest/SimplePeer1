@@ -1,4 +1,5 @@
 //Configuration
+const version = "0.0.1";
 const gameConfig = {
     starting_player: 1,
     player_colors: [
@@ -137,3 +138,7 @@ let drawSelection = (S) => {
         Client.GW.B.drawSquare({ color: S.color, x: item.x, y: item.y }, Client.GW.B.colors.white_highlight);
     });
 }
+//Display version on bottom left corner
+$(function () {
+    $('body').append('<footer id="version" style="position: absolute;bottom: 0;color: rgb(27 27 27 / 34%);">' + version + '</footer>')
+})
