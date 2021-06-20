@@ -14,6 +14,7 @@ class GameProcessor {
         this.#gameState = false;
     }
     move(playerIndex, S, x2, y2) {
+        if (this.#gameState == false) return false;
         if (!this.isMoveLegal(S, x2, y2)) return false;
         if (this.turn != playerIndex) return false;
 
@@ -42,17 +43,20 @@ class GameProcessor {
     }
     getGameState() { return this.#gameState }
     checkWinner() {
+        var winner = false;
         var runner_count = [false, 0, 0];
         this.#runners.map((column, x) => column.map((item, y) => {
             if (item) {
                 runner_count[item.player]++;
-                if (item.player == 1 && y == 0) return 1;
-                if (item.player == 2 && y == 6) return 2;
+                if (item.player == 1 && y == 0) winner = 1;
+                if (item.player == 2 && y == 6) winner = 2;
             }
         }));
-        if (runner_count[1] == 0) return 2;
-        if (runner_count[2] == 0) return 1;
-        return false;
+        if (runner_count[1] == 0) winner = 2;
+        if (runner_count[2] == 0) winner = 1;
+
+        if (winner) this.#gameState = false;
+        return winner;
     }
     checkForCaptures() {
         this.#runners.map((column, x) => column.map((item, y) => {

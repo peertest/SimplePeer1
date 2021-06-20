@@ -1,5 +1,5 @@
 //Configuration
-const version = "0.0.1";
+const version = "0.1.0";
 const gameConfig = {
     starting_player: 1,
     player_colors: [
@@ -90,6 +90,9 @@ function connected() {
             Client.selected = false;
             Client.GW.B.drawBoard();
         }
+        //Check for winner
+        var winner = Game.checkWinner();
+        if (winner) winPrompt(winner);
     })
 }
 
@@ -137,6 +140,13 @@ let drawSelection = (S) => {
     moves.map((item) => {
         Client.GW.B.drawSquare({ color: S.color, x: item.x, y: item.y }, Client.GW.B.colors.white_highlight);
     });
+}
+function winPrompt(i) {
+    if (playerIndex == i) {
+        alert('You won the game!')
+    } else {
+        aler('you lost :((')
+    }
 }
 //Display version on bottom left corner
 $(function () {
