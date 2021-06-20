@@ -455,7 +455,7 @@ function possibleRunnerMoves(runners, x, y) {
         return false;
     }
     var moves = [];
-    if (x >= 0 && !runners[x - 1][y]) {
+    if (x > 0 && !runners[x - 1][y]) {
         moves.push({
             x: x - 1,
             y: y

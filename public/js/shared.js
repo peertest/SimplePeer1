@@ -1,5 +1,5 @@
 //Configuration
-const version = "0.1.2";
+const version = "0.1.3";
 const gameConfig = {
     starting_player: 1,
     player_colors: [
