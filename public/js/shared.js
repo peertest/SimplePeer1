@@ -62,7 +62,7 @@ function sendData(rawData) {
     }*/
 }
 function connected() {
-    if (typeof Game != "object") return false;
+    if (typeof Game == "object") return false;
 
     Client = new GameClient(playerIndex, 'gameWindow');
     Game = new GameProcessor('Player 1', 'Player 2');
