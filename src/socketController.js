@@ -25,8 +25,14 @@ module.exports = (io) => {
         })
 
         socket.on('connectRtc', data => {
-            console.log(data.connectTo, data.myAlias);
-            peers[data.connectTo].emit("connectRtc", data.myAlias);
+            try{
+                console.log(data.connectTo, data.myAlias);
+                peers[data.connectTo].emit("connectRtc", data.myAlias);
+            }
+            catch{
+                console.log();
+            }
+            
         })
 
         /**
