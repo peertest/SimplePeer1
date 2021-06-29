@@ -1,5 +1,5 @@
 //Configuration
-const version = "0.1.5";
+const version = "0.1.6";
 const gameConfig = {
     starting_player: 1,
     player_colors: [
@@ -62,6 +62,7 @@ function sendData(rawData) {
     }*/
 }
 function connected() {
+    if (typeof Game != "object") return false;
 
     Client = new GameClient(playerIndex, 'gameWindow');
     Game = new GameProcessor('Player 1', 'Player 2');
