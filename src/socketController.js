@@ -27,10 +27,10 @@ module.exports = (io) => {
         socket.on('connectRtc', data => {
             try{
                 console.log(data.connectTo, data.myAlias);
-                peers[data.connectTo].emit("connectRtc", data.myAlias);
+            peers[data.connectTo].emit("connectRtc", data.myAlias);
             }
-            catch{
-                console.log();
+            catch(){
+                console.log;
             }
             
         })
